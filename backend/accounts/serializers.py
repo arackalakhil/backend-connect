@@ -64,7 +64,7 @@ class UserproflieSerializer(ModelSerializer):
     class Meta:
         model = UserProfile
         fields=  '__all__'
-        depth = 1
+        # depth = 1
 
 
 # class UserproflieSerializer(ModelSerializer):

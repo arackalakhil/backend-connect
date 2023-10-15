@@ -17,19 +17,21 @@ from rest_framework import viewsets
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
-
+from rest_framework.parsers import MultiPartParser, FormParser
 from recruiter.serializers import JobsSerializer
 
 # from accounts.serializers import Companyserializer
-
-
-
+from django.http import JsonResponse
 # from  .utils import Utilsx
 # Create your views here.
-
+class learn(APIView): 
+    def get(self,request):
+        data={"message": "i am good"}
+        return JsonResponse(data)
 class RegisterUser(APIView):
     def post(self, request):
         user=request.data
+        
         print(request.data)
         userserializer=AccountSerializer(data=request.data)
         datas={} #to pass data to front end just for verification not nessery
@@ -320,6 +322,7 @@ class deleteExperience(APIView):
 
 class ViewUserProfile(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
     def get(self, request):
         serializer=None
         try:
@@ -327,20 +330,23 @@ class ViewUserProfile(APIView):
             data ={}
             if Account.objects.get(username=user):
                 users=Account.objects.get(username=user)
-                user_profile = UserProfile.objects.get(user=user)
+        
+                user_profile = UserProfile.objects.get(user=users)
                 serializer = UserproflieSerializer(user_profile,context={'request':request})
                 return Response(serializer.data,status=status.HTTP_200_OK)
             else:
                 data["err"]="create a profile"
-                return Response(data,status=status.HTTP_200_OK)
+                return Response(data,status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(serializer.data,status=status.HTTP_204_NO_CONTENT)
 
     def patch (self,request):
         serializer=None
         # try:
-        print(request.data)
+        print("datadatadadtaadadadadasdadadssddddddddddddddddddddddd",request.data)
+        
         user=request.user
+        
         data=request.data
         print(user)
         user_profile = UserProfile.objects.get(user=user)
@@ -351,8 +357,8 @@ class ViewUserProfile(APIView):
         user_profile.skil2=data.get("skil2",user_profile.skil2)
         user_profile.skil3=data.get("skil3",user_profile.skil3)
         user_profile.save()
-        serializer=UserproflieSerializer(user_profile,context={"request":request})
-        print(serializer.data)
+        serializer=UserproflieSerializer(data=user_profile,context={"request":request})
+       
         if serializer.is_valid():
          return Response(serializer.data,status=status.HTTP_201_CREATED)
     # except:
@@ -360,18 +366,23 @@ class ViewUserProfile(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def post (self,request):
-        print('reqqqq',request.data)
+        print('user is',request.user.id)
+        # print('skilll',request.data['skill'])
+        # print('reqqqq',request.data)
+
         # edu_id = request.data['id']
         # eduuu = UserProfile.objects.get(id=edu_id)
         # education_data=self.get_objiect(id)
     
-        serializer=UserproflieSerializer( data=request.data)
+        serializer=UserproflieSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            print(serializer.data)
+            print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
             return Response(status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)
-
+            print("lllllllllllllllllllllllllllllllllllllll")
             return Response(serializer.errors,status=status.HTTP_304_NOT_MODIFIED)
 
 

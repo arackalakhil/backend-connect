@@ -174,6 +174,7 @@ class Applicantprofile(APIView):
             return Response(serializer.data,status=status.HTTP_200_OK)
 
 
+
 # /////////////////////////////////////company Profile///////////////////////
 class Comanyprofile(APIView):
     permission_classes = [permissions.IsAuthenticated]

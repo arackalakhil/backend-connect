@@ -8,7 +8,7 @@ from . views import  RegisterUser, VerifyOTP
 
 
 urlpatterns = [
-   
+    path("learn",learn.as_view()),
     path('register', RegisterUser.as_view()),
     path('verifyotp',VerifyOTP.as_view()),
 
